@@ -1,0 +1,26 @@
+{
+  "name": "dtxmania-organizer",
+  "version": "1.0.0",
+  "description": "Little program to organize and re-name DTXMania song files",
+  "main": "bin/index.js",
+  "scripts": {
+    "start": "node bin/index.js",
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jere Aagaard",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.2",
+    "@types/iconv-lite": "0.0.1",
+    "@types/node": "^10.1.2",
+    "@types/prompt-sync": "^4.1.0",
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "fs-extra": "^6.0.1",
+    "iconv-lite": "^0.4.23",
+    "prompt-sync": "^4.1.6"
+  }
+}
