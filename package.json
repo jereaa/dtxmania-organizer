@@ -5,7 +5,7 @@
   "main": "bin/index.js",
   "scripts": {
     "start": "node bin/index.js",
-    "tsc": "tsc",
+    "tsc": "node_modules/.bin/tsc.cmd",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jere Aagaard",

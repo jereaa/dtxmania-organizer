@@ -1,0 +1,32 @@
+{
+    "songsDirectory": "D:/DTXMania/song_files/asd/",
+    "songDirStructure": [
+        {
+            "dirName": "audio",
+            "extensions": [
+                ".xa",
+                ".ogg",
+                ".mp3",
+                ".wav"
+            ]
+        },
+        {
+            "dirName": "img",
+            "extensions": [
+                ".jpg",
+                ".png",
+                ".gif",
+                ".bmp",
+                ".jpeg"
+            ]
+        },
+        {
+            "dirName": "vid",
+            "extensions": [
+                ".avi",
+                ".mp4",
+                ".mkv"
+            ]
+        }
+    ]
+}

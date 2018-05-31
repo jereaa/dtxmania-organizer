@@ -1,42 +1,57 @@
-import * as fse from "fs-extra";
+import * as fs from "fs";
+import * as path from "path";
 
 import { DefReader } from "./DefReader";
 import { DtxFileManager } from "./DtxFileManager";
+import { Logger } from "./Logger";
+import { Settings } from "./Settings";
 
-//TODO: Remove this pls
-const testPath = "D:/DTXMania/song_files/test/";
+const songsPath = Settings.conf.songsDirectory;
 
-fse.readdir(testPath, (err, files) => {
+fs.readdir(songsPath, (err, files) => {
     if (err) {
-        console.error("There was an error when trying to read the dir " + testPath + ". Error: " + err);
+        Logger.logError("There was an error when trying to read the dir " + songsPath + ". Error: " + err);
     } else {
-        files.forEach(songDirName => {
-            let songDirPath = testPath + songDirName + "/";
-            let innerFiles = fse.readdirSync(songDirPath);
+        files.forEach((songDirName) => {
+            const songDirPath = songsPath + songDirName + "/";
 
-            let setFile = innerFiles.find((value) => {
-                if (value.toLowerCase() === "set.def") {
-                    return true;
-                }
-                return false;
-            });
+            if (fs.statSync(path.join(songsPath, songDirName)).isDirectory()) {
+                const innerFiles = fs.readdirSync(songDirPath);
 
-            if (setFile) {
-                let reader = new DefReader(testPath + songDirName + "/" + setFile);
-
-                let dtxFileNames = reader.dtxFilenames;
-                for (let i = 0; i < dtxFileNames.length; i++) {
-                    const dtxFileName = dtxFileNames[i];
-                    
-                    let dtxManager = new DtxFileManager(testPath + songDirName + "/" + dtxFileName);
-                    dtxManager.checkFiles();
-                }
-
-                fse.rename(songDirPath, testPath + reader.title + "/", (err) => {
-                    if (err) throw err;
+                const setFile = innerFiles.find((value) => {
+                    if (value.toLowerCase() === "set.def") {
+                        return true;
+                    }
+                    return false;
                 });
-            }
 
+                if (setFile) {
+                    const reader = new DefReader(songsPath + songDirName + "/" + setFile);
+
+                    if (reader.wasProperlyInitialized) {
+                        const dtxFileNames = reader.dtxFilenames;
+
+                        for (const dtxFilename of dtxFileNames) {
+                            const dtxManager = new DtxFileManager(songsPath + songDirName + "/" + dtxFilename);
+                            if (dtxManager.wasProperlyInitialized && dtxManager.checkFiles()) {
+                                dtxManager.saveFile();
+                            }
+                            // dtxManager.organizeSongDir();
+                            // dtxManager.saveFile();
+                        }
+
+                        if (path.basename(songDirPath) !== reader.songTitle) {
+                            fs.rename(songDirPath, path.join(songsPath, reader.songTitle), (renameErr) => {
+                                if (renameErr) { throw renameErr; }
+                                Logger.log("Renamed dir '" + path.basename(songDirPath) +
+                                    "' to '" + reader.songTitle + "'");
+                            });
+                        }
+                    }
+                } else {
+                    Logger.logError("Couldn't find a SET.def file for '" + songDirName + "'");
+                }
+            }
         });
     }
-})
+});
